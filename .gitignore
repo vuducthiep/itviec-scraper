@@ -10,6 +10,9 @@ cookies-raw.txt
 debug-*.html
 debug-*.json
 *.log
+*.db
+*.sqlite
+*.sqlite3
 
 # Env & secrets
 .env
