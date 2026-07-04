@@ -72,7 +72,25 @@ rm itviec-state.json
 node scraper.js
 ```
 
-## 4. Import du lieu vao SQLite
+## 4. Lam sach du lieu
+
+Sau khi scraper co du lieu, co the tao ban JSON da chuan hoa:
+
+```bash
+python clean_jobs.py
+```
+
+Lenh nay tao file:
+
+```text
+itviec-jobs-clean.json
+```
+
+File clean se trim text, dedupe tags/skills, chuan hoa `location`, `workingMode`, `label`, va them `salaryMinUsd` / `salaryMaxUsd` neu parse duoc salary.
+
+Neu khong can clean rieng, co the bo qua buoc nay va import truc tiep tu `itviec-jobs.json`.
+
+## 5. Import du lieu vao SQLite
 
 Sau khi co du lieu, chay:
 
@@ -88,12 +106,18 @@ itviec.db
 
 Script import se uu tien doc `itviec-jobs.json`. Neu file JSON cuoi chua co nhung `itviec-state.json` da co du lieu tam, script van co the import du lieu hien co tu state.
 
+Neu muon import tu file da clean:
+
+```bash
+python import_to_sqlite.py --json itviec-jobs-clean.json
+```
+
 SQLite gom 2 bang chinh:
 
 - `jobs`: thong tin job.
 - `job_skills`: quan he job va skill de thong ke skill de hon.
 
-## 5. Chay Streamlit dashboard
+## 6. Chay Streamlit dashboard
 
 ```bash
 streamlit run streamlit_app.py
@@ -125,15 +149,25 @@ npx playwright install chromium
 pip install -r requirements.txt
 node build-cookies.js
 node scraper.js
-python import_to_sqlite.py
+python clean_jobs.py
+python import_to_sqlite.py --json itviec-jobs-clean.json
 streamlit run streamlit_app.py
 ```
 
-Neu da co cookie va dependencies roi, moi lan cap nhat du lieu chi can:
+Neu khong can buoc clean:
 
 ```bash
 node scraper.js
 python import_to_sqlite.py
+streamlit run streamlit_app.py
+```
+
+Neu da co cookie va dependencies roi, moi lan cap nhat du lieu nen chay:
+
+```bash
+node scraper.js
+python clean_jobs.py
+python import_to_sqlite.py --json itviec-jobs-clean.json
 streamlit run streamlit_app.py
 ```
 
@@ -160,6 +194,7 @@ Khong commit cac file du lieu va session:
 - `itviec-cookies.json`
 - `itviec-state.json`
 - `itviec-jobs.json`
+- `itviec-jobs-clean.json`
 - `itviec.db`
 
 Nhung file nay da duoc dua vao `.gitignore`.
@@ -190,6 +225,7 @@ Neu gap Cloudflare lien tuc:
 |---|---|
 | `scraper.js` | Crawl ITviec va ghi JSON/state |
 | `build-cookies.js` | Convert raw Cookie header sang Playwright storageState |
+| `clean_jobs.py` | Chuan hoa du lieu crawl ra `itviec-jobs-clean.json` |
 | `import_to_sqlite.py` | Import JSON/state vao SQLite |
 | `streamlit_app.py` | Dashboard Streamlit |
 | `requirements.txt` | Python dependencies |

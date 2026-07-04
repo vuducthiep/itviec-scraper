@@ -9,6 +9,7 @@ itviec-cookies.json
 cookies-raw.txt
 debug-*.html
 debug-*.json
+itviec-jobs-clean.json
 *.log
 *.db
 *.sqlite
