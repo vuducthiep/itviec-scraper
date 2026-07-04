@@ -46,6 +46,22 @@ def normalize_working_mode(value):
     return text
 
 
+def infer_level(title):
+    text = clean_text(title).casefold()
+    patterns = [
+        ("Intern", r"\bintern(ship)?\b"),
+        ("Fresher", r"\bfresher\b"),
+        ("Junior", r"\b(junior|jr)\b"),
+        ("Middle", r"\b(middle|mid)\b"),
+        ("Senior", r"\b(senior|sr)\b"),
+        ("Lead", r"\blead\b"),
+        ("Principal", r"\bprincipal\b"),
+        ("Manager", r"\bmanager\b"),
+        ("Expert", r"\bexpert\b"),
+    ]
+    return "/".join(level for level, pattern in patterns if re.search(pattern, text))
+
+
 def parse_salary_usd(value):
     text = clean_text(value)
     low = text.casefold()
@@ -83,6 +99,7 @@ def clean_job(job):
             "jobKey": clean_text(job.get("jobKey")),
             "slug": clean_text(job.get("slug")),
             "title": clean_text(job.get("title")),
+            "level": infer_level(job.get("title")),
             "url": clean_text(job.get("url")),
             "company": clean_text(job.get("company")),
             "companySlug": clean_text(job.get("companySlug")),
@@ -124,6 +141,7 @@ def self_test():
     assert parse_salary_usd("Up to $3200") == (None, 3200)
     assert normalize_location("hanoi") == "Ha Noi"
     assert clean_list([" Python ", "python", "", "SQL"]) == ["Python", "SQL"]
+    assert infer_level("[Hanoi] Principal/ Senior Golang Engineer") == "Senior/Principal"
 
 
 def main():
