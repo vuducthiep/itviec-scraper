@@ -38,6 +38,7 @@ def create_schema(conn: sqlite3.Connection) -> None:
           job_key TEXT,
           slug TEXT,
           title TEXT,
+          level TEXT,
           company TEXT,
           company_slug TEXT,
           salary TEXT,
@@ -89,6 +90,7 @@ def insert_jobs(conn: sqlite3.Connection, jobs: list[dict]) -> None:
                 job.get("jobKey"),
                 job.get("slug"),
                 job.get("title"),
+                job.get("level"),
                 job.get("company"),
                 job.get("companySlug"),
                 job.get("salary"),
@@ -114,10 +116,10 @@ def insert_jobs(conn: sqlite3.Connection, jobs: list[dict]) -> None:
     conn.executemany(
         """
         INSERT OR REPLACE INTO jobs (
-          url, job_key, slug, title, company, company_slug, salary, working_mode,
+          url, job_key, slug, title, level, company, company_slug, salary, working_mode,
           location, posted_time, label, tags_json, skills_json, reasons,
           job_description, requirements, benefits, company_info_json, scraped_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         rows,
     )

@@ -15,7 +15,7 @@ def load_jobs() -> pd.DataFrame:
         return pd.read_sql_query(
             """
             SELECT
-              url, title, company, salary, working_mode, location, posted_time,
+              url, title, level, company, salary, working_mode, location, posted_time,
               label, skills_json, job_description, requirements, benefits
             FROM jobs
             ORDER BY company, title
@@ -66,6 +66,7 @@ with st.sidebar:
     keyword = st.text_input("Search")
     locations = st.multiselect("Location", sorted(jobs["location"].dropna().unique()))
     modes = st.multiselect("Working mode", sorted(jobs["working_mode"].dropna().unique()))
+    levels = st.multiselect("Level", sorted(jobs["level"].dropna().unique()))
     only_salary = st.checkbox("Has visible salary")
 
 filtered = jobs.copy()
@@ -82,6 +83,8 @@ if locations:
     filtered = filtered[filtered["location"].isin(locations)]
 if modes:
     filtered = filtered[filtered["working_mode"].isin(modes)]
+if levels:
+    filtered = filtered[filtered["level"].isin(levels)]
 if only_salary:
     filtered = filtered[
         filtered["salary"].fillna("").ne("")
@@ -104,7 +107,7 @@ with right:
 
 st.subheader("Jobs")
 table = filtered[
-    ["title", "company", "salary", "working_mode", "location", "posted_time", "label", "url"]
+    ["title", "level", "company", "salary", "working_mode", "location", "posted_time", "label", "url"]
 ].copy()
 st.dataframe(table, use_container_width=True, hide_index=True)
 
@@ -113,6 +116,7 @@ if selected_url:
     job = filtered[filtered["url"] == selected_url].iloc[0]
     st.markdown(f"### [{job['title']}]({job['url']})")
     st.write(f"**Company:** {job['company']}")
+    st.write(f"**Level:** {job['level']}")
     st.write(f"**Salary:** {job['salary']}")
     st.write(f"**Skills:** {parse_skills(job['skills_json'])}")
 
